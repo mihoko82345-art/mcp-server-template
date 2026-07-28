@@ -16,7 +16,10 @@ def get_server_info() -> dict:
         "environment": os.environ.get("ENVIRONMENT", "development"),
         "python_version": os.sys.version.split()[0]
     }
-
+@mcp.tool(description="测试工具")
+def test() -> str:
+    return "成功啦！"
+    
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     host = "0.0.0.0"
