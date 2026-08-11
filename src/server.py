@@ -6,7 +6,6 @@ from fastmcp import FastMCP
 mcp = FastMCP("Sample MCP Server")
 
 import urllib.request
-import json
 
 @mcp.tool(description="读取私密 GitHub 仓库中的 Markdown 文件")
 def read_markdown(path: str) -> str:
