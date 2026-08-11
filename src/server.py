@@ -5,6 +5,39 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("Sample MCP Server")
 
+import urllib.request
+import json
+
+@mcp.tool(description="读取私密 GitHub 仓库中的 Markdown 文件")
+def read_markdown(path: str) -> str:
+    token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPO")
+    branch = os.environ.get("GITHUB_BRANCH", "main")
+
+    if not token:
+        return "错误：没有配置 GITHUB_TOKEN"
+
+    if not repo:
+        return "错误：没有配置 GITHUB_REPO"
+
+    url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={branch}"
+
+    request = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github.raw+json",
+            "User-Agent": "mcp-markdown-reader"
+        }
+    )
+
+    try:
+        with urllib.request.urlopen(request) as response:
+            return response.read().decode("utf-8")
+
+    except Exception as e:
+        return f"读取 Markdown 失败：{e}"
+
 @mcp.tool(description="Greet a user by name with a welcome message from the MCP server")
 def greet(name: str) -> str:
     return f"Hello, {name}! Welcome to our sample MCP server running on Heroku!"
