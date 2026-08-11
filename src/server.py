@@ -13,6 +13,10 @@ def read_markdown(path: str) -> str:
     repo = os.environ.get("GITHUB_REPO")
     branch = os.environ.get("GITHUB_BRANCH", "main")
 
+    print("GitHub Repo:", repo)
+    print("GitHub Branch:", branch)
+    print("GitHub Path:", path)
+
     if not token:
         return "错误：没有配置 GITHUB_TOKEN"
 
