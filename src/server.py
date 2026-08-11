@@ -21,6 +21,8 @@ def read_markdown(path: str) -> str:
 
     url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={branch}"
 
+    print("GitHub读取地址：", url)
+
     request = urllib.request.Request(
         url,
         headers={
