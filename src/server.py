@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-from pathlib import Path
+import urllib.request
 from fastmcp import FastMCP
 
 mcp = FastMCP("Sample MCP Server")
@@ -21,23 +21,51 @@ def get_server_info() -> dict:
 def test() -> str:
     return "成功啦！"
     
-@mcp.tool(description="读取服务器上的 Markdown 文件内容")
-def read_markdown(file_path: str) -> str:
-    path = Path(file_path)
+@mcp.tool(description="读取私密 GitHub 仓库中的 Markdown 文件")
+def read_markdown(path: str) -> str:
+    token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPO")
+    branch = os.environ.get("GITHUB_BRANCH", "main")
 
-    if not path.exists():
-        return f"找不到文件：{file_path}"
+    print("========== READ_MARKDOWN CALLED ==========")
+    print("GitHub Repo:", repo)
+    print("GitHub Branch:", branch)
+    print("GitHub Path:", path)
 
-    if not path.is_file():
-        return f"这不是一个文件：{file_path}"
+    if not token:
+        return "错误：没有配置 GITHUB_TOKEN"
 
-    if path.suffix.lower() != ".md":
-        return "这里只允许读取 .md Markdown 文件"
+    if not repo:
+        return "错误：没有配置 GITHUB_REPO"
+
+    url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={branch}"
+
+    print("GitHub读取地址:", url)
+
+    request = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github.raw+json",
+            "User-Agent": "mcp-markdown-reader"
+        }
+    )
 
     try:
-        return path.read_text(encoding="utf-8")
+        with urllib.request.urlopen(request) as response:
+            content = response.read().decode("utf-8")
+
+            print("GitHub Status:", response.status)
+            print("GitHub Content Length:", len(content))
+            print("GitHub Content Preview:", content[:300])
+
+            return content
+
     except Exception as e:
-        return f"读取文件失败：{e}"
+        print("========== GITHUB READ ERROR ==========")
+        print("Error:", repr(e))
+        print("=======================================")
+        return f"读取 Markdown 失败：{e}"
 
 
 if __name__ == "__main__":
