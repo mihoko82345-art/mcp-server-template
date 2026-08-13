@@ -38,15 +38,7 @@ def read_markdown(path: str) -> str:
 
     try:
     with urllib.request.urlopen(request) as response:
-        data = response.read().decode("utf-8")
-
-        print("========== GITHUB RESPONSE ==========")
-        print("GitHub Status:", response.status)
-        print("GitHub Content Length:", len(data))
-        print("GitHub Content Preview:", data[:300])
-        print("=====================================")
-
-        return data
+        return response.read().decode("utf-8")
 
 except Exception as e:
     print("========== GITHUB READ ERROR ==========")
