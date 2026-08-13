@@ -37,11 +37,22 @@ def read_markdown(path: str) -> str:
     )
 
     try:
-        with urllib.request.urlopen(request) as response:
-            return response.read().decode("utf-8")
+    with urllib.request.urlopen(request) as response:
+        data = response.read().decode("utf-8")
 
-    except Exception as e:
-        return f"读取 Markdown 失败：{e}"
+        print("========== GITHUB RESPONSE ==========")
+        print("GitHub Status:", response.status)
+        print("GitHub Content Length:", len(data))
+        print("GitHub Content Preview:", data[:300])
+        print("=====================================")
+
+        return data
+
+except Exception as e:
+    print("========== GITHUB READ ERROR ==========")
+    print("Error:", repr(e))
+    print("=======================================")
+    return f"读取 Markdown 失败：{e}"
 
 @mcp.tool(description="Greet a user by name with a welcome message from the MCP server")
 def greet(name: str) -> str:
