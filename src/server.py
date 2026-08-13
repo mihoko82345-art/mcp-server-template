@@ -63,6 +63,22 @@ def test() -> str:
 def read_markdown(file_path: str) -> str:
     path = Path(file_path)
 
+    print("========== READ_MARKDOWN CALLED ==========")
+
+    token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPO")
+    branch = os.environ.get("GITHUB_BRANCH", "main")
+
+    print("GitHub Repo:", repo)
+    print("GitHub Branch:", branch)
+    print("GitHub Path:", path)
+
+    if not token:
+        return "错误：没有配置 GITHUB_TOKEN"
+
+    if not repo:
+        return "错误：没有配置 GITHUB_REPO"
+
     if not path.exists():
         return f"找不到文件：{file_path}"
 
